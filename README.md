@@ -76,12 +76,12 @@ SeiTune has no account, analytics or tracking. Nothing is sent anywhere except t
 
 ## Disclaimer
 
-SeiTune is a client for content that is publicly available online. You are responsible for how you use it. Only download content you have the right to download, and respect the terms of the services you use and the copyright of the creators.
+SeiTune is a general-purpose player and download client. It hosts no content, and everything you search, play or download comes straight from third-party services to your device. You alone are responsible for your use of the app, for following the laws that apply to you, the rights of creators and the terms of the services you use. Only download content you have the right to download. The developer does not condone illegal use and is not liable for any use or misuse of the app. Read the full [DISCLAIMER](DISCLAIMER.md).
 
 ## License
 
 Copyright (C) 2026 Glmrk.
 
-SeiTune is free software under the **GNU General Public License v3**: you can use, study, change and share it, and any copy or changed version must stay free under the same license with the source code available. See [LICENSE](LICENSE) or <https://www.gnu.org/licenses/gpl-3.0.html>.
+SeiTune is free software under the **GNU General Public License v3**: you can use, study, change and share it, and any copy or changed version must stay free under the same license with the source code available. See [LICENSE](LICENSE) (and the [DISCLAIMER](DISCLAIMER.md)) or <https://www.gnu.org/licenses/gpl-3.0.html>.
 
 Third-party: [yt-dlp](https://github.com/yt-dlp/yt-dlp) (Unlicense), [youtubedl-android](https://github.com/yausername/youtubedl-android) (GPL v3).
