@@ -2,7 +2,7 @@
 
 **Music for your quiet world.** A free, ad-free music and video player for Android that searches YouTube, streams the media file itself, and downloads songs and videos to your device. Everything runs inside the app: no account and no API key.
 
-[![Build APK](https://github.com/glmrkk09/SeiTune/actions/workflows/build.yml/badge.svg)](https://github.com/glmrkk09/SeiTune/actions/workflows/build.yml)
+(https://github.com/glmrkk09/SeiTune/actions/workflows/build.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![Android 7.0+](https://img.shields.io/badge/Android-7.0%2B-3ddc84)
 
