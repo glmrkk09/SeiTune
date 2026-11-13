@@ -2,6 +2,10 @@
 
 <img src="banner.png" alt="SeiTune" width="100%">
 
+<h1>SeiTune</h1>
+
+<sub>by: mrk</sub>
+
 **Music for your quiet world.**
 
 A free, ad-free music and video player for Android that searches YouTube, streams the media file itself, and downloads songs and videos to your device. Everything runs inside the app: no account and no API key.
