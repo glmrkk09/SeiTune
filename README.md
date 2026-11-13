@@ -1,9 +1,15 @@
-# SeiTune
+<div align="center">
 
-**Music for your quiet world.** A free, ad-free music and video player for Android that searches YouTube, streams the media file itself, and downloads songs and videos to your device. Everything runs inside the app: no account and no API key.
+<img src="banner.png" alt="SeiTune" width="100%">
+
+**Music for your quiet world.**
+
+A free, ad-free music and video player for Android that searches YouTube, streams the media file itself, and downloads songs and videos to your device. Everything runs inside the app: no account and no API key.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![Android 7.0+](https://img.shields.io/badge/Android-7.0%2B-3ddc84)
+
+</div>
 
 ## Features
 
@@ -33,6 +39,44 @@
 ### Interface
 - Dark and light themes.
 - Android Back button goes back one level: closes sheets, collapses the player, leaves a playlist, returns to Home, and only then sends the app to the background.
+
+## Performance
+
+Measured on a rooted device with the screen off. **This test is only for offline play** (playing saved songs).
+
+```text
+====================================================================
+ BACKGROUND CPU WASTE, GAMING IMPACT & BATTERY PREDICTION REPORT
+====================================================================
+Note              : ROOTED DEVICE CHECKS (su / kernel /proc access)
+Date & Time       : 2026-11-13 16:16:22
+Target Package    : com.mrk.seitune (PID: 24841)
+Sample Duration   : 60 seconds (20 samples)
+Battery Capacity  : 7000 mAh
+ TRUE LIVE CPU METRICS (BACKGROUND)
+--------------------------------------------------------------------
+Average Live CPU  : 0.00%
+Peak CPU Spike    : 0%
+Big Core Hits     : 8 / 20 samples (Cores 4-7)
+ DEEP MEMORY FOOTPRINT (DUMPSYS MEMINFO)
+--------------------------------------------------------------------
+True Private PSS  : 121.5 MB (124428 KB)
+Total Shared RSS  : 263.7 MB (269992 KB)
+Graphics Textures : 41.1 MB (42060 KB)
+ GAMING PERFORMANCE IMPACT
+--------------------------------------------------------------------
+Verdict           : EXCELLENT (Zero Lag / Safe for Competitive Gaming)
+Voluntary Wakeups : 0.6 wakeups/sec (Audio buffer feeding)
+Forced Preempts   : 1 total (CPU thread contention)
+ PREDICTED BACKGROUND BATTERY DRAIN (SCREEN OFF)
+--------------------------------------------------------------------
+Estimated Power   : ~40.0 mAh / hour
+Estimated Drain   : ~0.57% battery / hour
+10-Hour Playback  : ~5.7% total battery used
+====================================================================
+Note: Generated via Root (su) kernel profiling on Android.
+====================================================================
+```
 
 ## Install
 
