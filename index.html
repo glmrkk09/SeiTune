@@ -148,6 +148,9 @@ var CONFIG = {
   /* used when icon above fails to load */
   iconFallback: "https://raw.githubusercontent.com/glmrkk09/SeiTune/main/app/src/main/assets/logo.png",
 
+  /* files ending with these are hidden from the site (still stay on the github release) */
+  exclude: [".aab"],
+
   features: [
     ["Search and stream", "Songs, videos and playlists from YouTube with no ads."],
     ["Download", "Audio as M4A or video as MP4, one at a time or a whole playlist."],
@@ -239,8 +242,13 @@ var CONFIG = {
         pre: r.prerelease,
         notes: (r.body || "").trim(),
         page: r.html_url,
-        files: (r.assets || []).map(function(x){
+        files: (r.assets || []).filter(function(x){
+          var n = x.name.toLowerCase();
+          return !(CONFIG.exclude || []).some(function(e){ return n.slice(-e.length) === e.toLowerCase(); });
+        }).map(function(x){
           return { label: fileLabel(x.name), name: x.name, url: x.browser_download_url, size: fmtSize(x.size), count: x.download_count };
+        }).sort(function(a, b){
+          return (b.name.toLowerCase().indexOf("arm64") > -1) - (a.name.toLowerCase().indexOf("arm64") > -1);
         })
       };
     });
