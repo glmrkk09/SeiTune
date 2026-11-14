@@ -38,14 +38,12 @@ a{color:var(--ac)}
 :focus-visible{outline:2px solid var(--ac); outline-offset:3px; border-radius:8px}
 main{max-width:640px; margin:0 auto; padding:28px 18px 56px}
 
-/* top bar */
 .bar{display:flex; justify-content:flex-end; gap:8px; margin-bottom:8px}
 .bar button{
   font:inherit; font-size:14px; color:var(--fg); background:var(--card); border:1px solid var(--line);
   border-radius:12px; padding:7px 12px; cursor:pointer;
 }
 
-/* hero */
 .hero{text-align:center; padding:18px 0 26px}
 .icon{
   width:112px; height:112px; border-radius:26px; object-fit:cover; background:var(--card2);
@@ -56,7 +54,7 @@ h1{font-size:2.3rem; line-height:1.1; margin:18px 0 6px; letter-spacing:-.02em}
 .ver{display:inline-flex; gap:8px; align-items:center; margin-top:14px; font-size:14px; color:var(--mut)}
 .pill{background:var(--card2); border:1px solid var(--line); color:var(--fg); border-radius:99px; padding:2px 10px; font-weight:600}
 
-/* download buttons */
+/* download area */
 .dl{display:flex; flex-direction:column; gap:10px; margin:6px 0 10px}
 .btn{
   display:flex; align-items:center; justify-content:space-between; gap:12px;
@@ -65,12 +63,27 @@ h1{font-size:2.3rem; line-height:1.1; margin:18px 0 6px; letter-spacing:-.02em}
   transition:transform .25s cubic-bezier(.34,1.56,.64,1), border-color .2s;
 }
 .btn:hover{transform:translateY(-2px); border-color:var(--ac)}
-.btn small{display:block; font-weight:400; color:var(--mut); font-size:13px}
-.btn.main{background:var(--ac); color:#fff; border-color:transparent; box-shadow:0 10px 28px var(--ac-glow)}
-.btn.main small{color:rgba(255,255,255,.82)}
+.btn small{display:block; font-weight:400; color:var(--mut); font-size:13px; word-break:break-all}
 .btn .size{font-weight:500; font-size:14px; white-space:nowrap}
+.btn.main{
+  background:var(--ac); color:#fff; border-color:transparent; box-shadow:0 10px 28px var(--ac-glow);
+  padding:20px 20px; font-size:1.1rem;
+}
+.btn.main small{color:rgba(255,255,255,.88)}
+.badge{
+  display:inline-block; font-size:12px; font-weight:700; letter-spacing:.02em;
+  background:rgba(255,255,255,.22); color:#fff; border-radius:99px; padding:1px 9px; margin-bottom:4px;
+}
+.sub{margin:6px 2px 0; font-size:14px; color:var(--mut); text-align:center}
+.sub.warn{color:var(--fg); background:var(--card); border:1px solid var(--line); border-radius:12px; padding:9px 12px}
+.other-h{font-size:.85rem; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); margin:18px 2px 0}
 
-/* sections */
+.help{margin-top:14px}
+.help .body{padding:12px 14px 14px; font-size:14px; color:var(--mut)}
+.help .body p{margin:0 0 10px}
+.help .body b{color:var(--fg)}
+.help .body ul{margin:0; padding-left:18px}
+
 h2{font-size:1.1rem; margin:34px 0 10px}
 .notes{
   background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px 16px;
@@ -148,8 +161,9 @@ var CONFIG = {
   /* used when icon above fails to load */
   iconFallback: "https://raw.githubusercontent.com/glmrkk09/SeiTune/main/app/src/main/assets/logo.png",
 
-  /* files ending with these are hidden from the site (still stay on the github release) */
-  exclude: [".aab"],
+  /* files ending with these are hidden from the site (still stay on the github release).
+     .idsig are signing files, users do not need them */
+  exclude: [".aab", ".idsig"],
 
   features: [
     ["Search and stream", "Songs, videos and playlists from YouTube with no ads."],
@@ -160,18 +174,7 @@ var CONFIG = {
 
   /* OPTIONAL manual list. if filled, it is shown instead of github releases.
      leave as [] to load releases from github automatically. */
-  manualReleases: [
-    /* example:
-    {
-      version: "1.0.0",
-      date: "2026-11-13",
-      notes: "first release",
-      files: [
-        { label: "Android APK", url: "https://github.com/glmrkk09/SeiTune/releases/download/v1.0.0/app-release.apk", size: "42 MB" }
-      ]
-    }
-    */
-  ]
+  manualReleases: []
 };
 /* ========================================= */
 
@@ -179,7 +182,6 @@ var CONFIG = {
   var $ = function(id){ return document.getElementById(id); };
   var root = document.documentElement;
 
-  /* theme toggle, remembered when the browser allows it */
   try{ var t = localStorage.getItem("theme"); if(t) root.setAttribute("data-theme", t); }catch(e){}
   $("themeBtn").onclick = function(){
     var dark = root.getAttribute("data-theme") ? root.getAttribute("data-theme") === "dark"
@@ -189,7 +191,6 @@ var CONFIG = {
     try{ localStorage.setItem("theme", next); }catch(e){}
   };
 
-  /* header */
   document.title = CONFIG.name + " download";
   $("name").textContent = CONFIG.name;
   $("tagline").textContent = CONFIG.tagline;
@@ -199,10 +200,9 @@ var CONFIG = {
 
   var repoUrl = "https://github.com/" + CONFIG.owner + "/" + CONFIG.repo;
   $("foot").innerHTML = "";
-  var a = document.createElement("a"); a.href = repoUrl; a.textContent = "Source and issues on GitHub";
-  $("foot").appendChild(a);
+  var fa = document.createElement("a"); fa.href = repoUrl; fa.textContent = "Source and issues on GitHub";
+  $("foot").appendChild(fa);
 
-  /* features */
   if(CONFIG.features && CONFIG.features.length){
     CONFIG.features.forEach(function(f){
       var li = document.createElement("li");
@@ -223,16 +223,33 @@ var CONFIG = {
     var d = new Date(s); if(isNaN(d)) return s;
     return d.toLocaleDateString(undefined, {year:"numeric", month:"short", day:"numeric"});
   }
+
+  /* which cpu type a file is for */
+  function archOf(s){
+    s = (s || "").toLowerCase();
+    if(s.indexOf("arm64") > -1 || s.indexOf("v8a") > -1) return "arm64";
+    if(s.indexOf("armeabi") > -1 || s.indexOf("v7a") > -1 || s.indexOf("arm32") > -1) return "arm32";
+    if(s.indexOf("x86_64") > -1) return "x86_64";
+    if(s.indexOf("x86") > -1) return "x86";
+    return "other";
+  }
+  var INFO = {
+    arm64:  { title: "64-bit phones", tag: "Most phones", desc: "Nearly every phone from the last several years, including all Android 11 and newer phones." },
+    arm32:  { title: "32-bit phones", tag: "Older phones", desc: "Older or very low-end phones that cannot run 64-bit apps." },
+    x86_64: { title: "x86_64", tag: "Emulators and Chromebooks", desc: "For Android emulators and some Chromebooks." },
+    x86:    { title: "x86", tag: "Old emulators", desc: "For old 32-bit emulators." },
+    other:  { title: "Android APK", tag: "All phones", desc: "" }
+  };
   function fileLabel(name){
-    var n = name.toLowerCase();
-    if(n.indexOf("arm64") > -1) return "Android APK (64 bit)";
-    if(n.indexOf("armeabi") > -1 || n.indexOf("arm32") > -1) return "Android APK (32 bit)";
-    if(/\.apk$/.test(n)) return "Android APK";
-    if(/\.zip$/.test(n)) return "Zip file";
-    return name;
+    var a = archOf(name);
+    if(a === "other"){
+      if(/\.apk$/i.test(name)) return "Android APK";
+      if(/\.zip$/i.test(name)) return "Zip file";
+      return name;
+    }
+    return "Android APK (" + INFO[a].title + ")";
   }
 
-  /* normalise github api data and manual data into one shape */
   function fromGithub(list){
     return list.filter(function(r){ return !r.draft; }).map(function(r){
       return {
@@ -246,9 +263,9 @@ var CONFIG = {
           var n = x.name.toLowerCase();
           return !(CONFIG.exclude || []).some(function(e){ return n.slice(-e.length) === e.toLowerCase(); });
         }).map(function(x){
-          return { label: fileLabel(x.name), name: x.name, url: x.browser_download_url, size: fmtSize(x.size), count: x.download_count };
+          return { label: fileLabel(x.name), name: x.name, url: x.browser_download_url, size: fmtSize(x.size), arch: archOf(x.name) };
         }).sort(function(a, b){
-          return (b.name.toLowerCase().indexOf("arm64") > -1) - (a.name.toLowerCase().indexOf("arm64") > -1);
+          return (b.arch === "arm64") - (a.arch === "arm64");
         })
       };
     });
@@ -257,28 +274,108 @@ var CONFIG = {
     return list.map(function(r){
       return {
         version: r.version, date: r.date, notes: r.notes || "", pre: !!r.prerelease, page: r.page,
-        files: (r.files || []).map(function(x){ return { label: x.label || "Download", name: x.name || "", url: x.url, size: fmtSize(x.size) }; })
+        files: (r.files || []).map(function(x){
+          return { label: x.label || "Download", name: x.name || "", url: x.url, size: fmtSize(x.size), arch: archOf((x.name || "") + " " + (x.label || "") + " " + (x.url || "")) };
+        })
       };
     });
   }
 
-  function fileBtn(f, main){
-    var a = document.createElement("a");
-    a.className = "btn" + (main ? " main" : "");
-    a.href = f.url; a.rel = "noopener";
-    var left = document.createElement("div");
-    var t = document.createElement("span"); t.textContent = main ? "Download " + f.label : f.label;
-    left.appendChild(t);
-    if(f.name){ var sm = document.createElement("small"); sm.textContent = f.name; left.appendChild(sm); }
-    var right = document.createElement("span"); right.className = "size"; right.textContent = f.size;
-    a.appendChild(left); a.appendChild(right);
+  /* try to guess the phone cpu. returns {android:bool, arch:"arm64"|"arm32"|null} */
+  function detect(){
+    var ua = navigator.userAgent || "";
+    if(!/Android/i.test(ua)) return Promise.resolve({ android: false, arch: null });
+    if(/armv7|armv8l|armeabi/i.test(ua)) return Promise.resolve({ android: true, arch: "arm32" });
+    var uad = navigator.userAgentData;
+    if(uad && uad.getHighEntropyValues){
+      return uad.getHighEntropyValues(["architecture", "bitness"]).then(function(v){
+        var arch = v.bitness === "32" ? "arm32" : (v.bitness === "64" ? "arm64" : null);
+        return { android: true, arch: arch };
+      }).catch(function(){ return { android: true, arch: null }; });
+    }
+    return Promise.resolve({ android: true, arch: null });
+  }
+
+  function mk(tag, cls, text){
+    var e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text) e.textContent = text;
+    return e;
+  }
+
+  function bigBtn(f, rec, sure){
+    var info = INFO[f.arch] || INFO.other;
+    var a = mk("a", "btn main"); a.href = f.url; a.rel = "noopener";
+    var left = mk("div");
+    left.appendChild(mk("span", "badge", sure ? "Picked for your phone" : "Recommended"));
+    left.appendChild(mk("div", "", "Download " + CONFIG.name));
+    left.appendChild(mk("small", "", info.tag + (f.name ? " \u00b7 " + f.name : "")));
+    a.appendChild(left);
+    a.appendChild(mk("span", "size", f.size));
     return a;
+  }
+  function smallBtn(f){
+    var info = INFO[f.arch] || INFO.other;
+    var a = mk("a", "btn"); a.href = f.url; a.rel = "noopener";
+    var left = mk("div");
+    left.appendChild(mk("div", "", info.title + " (" + info.tag.toLowerCase() + ")"));
+    left.appendChild(mk("small", "", (info.desc ? info.desc + " " : "") + (f.name ? "(" + f.name + ")" : "")));
+    a.appendChild(left);
+    a.appendChild(mk("span", "size", f.size));
+    return a;
+  }
+
+  function helpBox(){
+    var det = mk("details", "help");
+    var sum = mk("summary"); sum.appendChild(mk("span", "", "Not sure which one to pick?"));
+    det.appendChild(sum);
+    var body = mk("div", "body");
+    var p1 = mk("p"); p1.innerHTML = "<b>Your Android version does not matter here.</b> The file depends on your phone's processor, not on Android 11, 12, 13 and so on.";
+    var p2 = mk("p"); p2.innerHTML = "<b>Most people:</b> use the big button (64-bit). It works on nearly all phones from the last several years.";
+    var p3 = mk("p"); p3.innerHTML = "<b>If it says the app is not compatible or will not install:</b> try the 32-bit file. That is for older phones.";
+    var p4 = mk("p"); p4.innerHTML = "<b>Update over an existing install:</b> download the same type you installed before, so the update installs cleanly.";
+    body.appendChild(p1); body.appendChild(p2); body.appendChild(p3); body.appendChild(p4);
+    det.appendChild(body);
+    return det;
+  }
+
+  function renderDownloads(latest, d){
+    var box = $("downloads"); box.innerHTML = "";
+    var files = latest.files;
+    if(!files.length){
+      box.appendChild(mk("p", "state", "This release has no files attached yet."));
+      return;
+    }
+    var pref = d && d.arch ? d.arch : "arm64";
+    var pick = null, i;
+    for(i = 0; i < files.length; i++){ if(files[i].arch === pref){ pick = files[i]; break; } }
+    if(!pick){ for(i = 0; i < files.length; i++){ if(files[i].arch === "arm64"){ pick = files[i]; break; } } }
+    if(!pick) pick = files[0];
+    var others = files.filter(function(f){ return f !== pick; });
+
+    var wrap = mk("div", "dl");
+    wrap.appendChild(bigBtn(pick, true, !!(d && d.arch && pick.arch === d.arch)));
+    box.appendChild(wrap);
+
+    if(d && d.android === false){
+      box.appendChild(mk("p", "sub warn", "You are not on an Android phone. Open this page on your phone, or download here and copy the file over."));
+    } else {
+      box.appendChild(mk("p", "sub", "Works on Android 11 and newer, and most older phones too."));
+    }
+
+    if(others.length){
+      box.appendChild(mk("div", "other-h", "Other versions"));
+      var w2 = mk("div", "dl");
+      others.forEach(function(f){ w2.appendChild(smallBtn(f)); });
+      box.appendChild(w2);
+    }
+    box.appendChild(helpBox());
   }
 
   function render(releases){
     var box = $("downloads"); box.innerHTML = "";
     if(!releases.length){
-      box.innerHTML = '<p class="state">No release yet. Check back soon.</p>';
+      box.appendChild(mk("p", "state", "No release yet. Check back soon."));
       return;
     }
     var stable = releases.filter(function(r){ return !r.pre; });
@@ -286,38 +383,30 @@ var CONFIG = {
 
     $("ver").hidden = false;
     $("ver").innerHTML = "";
-    var p = document.createElement("span"); p.className = "pill"; p.textContent = latest.version;
-    var d = document.createElement("span"); d.textContent = fmtDate(latest.date);
-    $("ver").appendChild(p); $("ver").appendChild(d);
+    $("ver").appendChild(mk("span", "pill", latest.version));
+    $("ver").appendChild(mk("span", "", fmtDate(latest.date)));
 
-    var wrap = document.createElement("div"); wrap.className = "dl";
-    if(!latest.files.length){
-      var none = document.createElement("p"); none.className = "state";
-      none.textContent = "This release has no files attached yet.";
-      box.appendChild(none);
-    } else {
-      latest.files.forEach(function(f, i){ wrap.appendChild(fileBtn(f, i === 0)); });
-      box.appendChild(wrap);
-    }
+    renderDownloads(latest, null);
+    detect().then(function(d){ renderDownloads(latest, d); });
 
     if(latest.notes){ $("notes").textContent = latest.notes; $("notesWrap").hidden = false; }
 
     var rest = releases.filter(function(r){ return r !== latest; });
     if(rest.length){
       rest.forEach(function(r){
-        var det = document.createElement("details");
-        var sum = document.createElement("summary");
-        var v = document.createElement("span"); v.textContent = r.version + (r.pre ? " (pre-release)" : "");
-        var dt = document.createElement("span"); dt.className = "d"; dt.textContent = fmtDate(r.date);
-        sum.appendChild(v); sum.appendChild(dt); det.appendChild(sum);
-        var body = document.createElement("div"); body.className = "old";
+        var det = mk("details");
+        var sum = mk("summary");
+        sum.appendChild(mk("span", "", r.version + (r.pre ? " (pre-release)" : "")));
+        sum.appendChild(mk("span", "d", fmtDate(r.date)));
+        det.appendChild(sum);
+        var body = mk("div", "old");
         r.files.forEach(function(f){
-          var a = document.createElement("a"); a.className = "file"; a.href = f.url; a.rel = "noopener";
-          var n = document.createElement("span"); n.textContent = f.name || f.label;
-          var s = document.createElement("span"); s.textContent = f.size;
-          a.appendChild(n); a.appendChild(s); body.appendChild(a);
+          var a = mk("a", "file"); a.href = f.url; a.rel = "noopener";
+          a.appendChild(mk("span", "", f.name || f.label));
+          a.appendChild(mk("span", "", f.size));
+          body.appendChild(a);
         });
-        if(r.notes){ var nt = document.createElement("div"); nt.className = "notes"; nt.textContent = r.notes; body.appendChild(nt); }
+        if(r.notes){ body.appendChild(mk("div", "notes", r.notes)); }
         det.appendChild(body); $("old").appendChild(det);
       });
       $("oldWrap").hidden = false;
@@ -326,9 +415,8 @@ var CONFIG = {
 
   function fail(){
     var box = $("downloads"); box.innerHTML = "";
-    var p = document.createElement("p"); p.className = "state err";
-    p.textContent = "Could not load releases. ";
-    var a = document.createElement("a"); a.href = repoUrl + "/releases"; a.textContent = "Open the releases page on GitHub";
+    var p = mk("p", "state err", "Could not load releases. ");
+    var a = mk("a", "", "Open the releases page on GitHub"); a.href = repoUrl + "/releases";
     p.appendChild(a); box.appendChild(p);
   }
 
