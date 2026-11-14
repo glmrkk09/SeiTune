@@ -63,6 +63,7 @@ h1{
   font-size:2.5rem; line-height:1.1; margin:20px 0 8px; letter-spacing:-.02em;
   background:linear-gradient(90deg,var(--fg),var(--ac) 70%,var(--ac2)); -webkit-background-clip:text; background-clip:text; color:transparent;
 }
+.by{margin:-2px 0 10px; font-size:13px; letter-spacing:.08em; color:var(--mut)}
 .tag{color:var(--mut); margin:0 auto; max-width:30em}
 .tags{display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin:16px 0 0; padding:0; list-style:none}
 .tags li{font-size:13px; font-weight:600; color:var(--fg); background:var(--card); border:1px solid var(--line); border-radius:99px; padding:3px 11px}
@@ -177,6 +178,7 @@ footer a{color:var(--mut)}
   <section class="hero">
     <img class="icon" id="icon" alt="SeiTune icon" width="116" height="116">
     <h1 id="name">SeiTune</h1>
+    <div class="by" id="by"></div>
     <p class="tag" id="tagline"></p>
     <ul class="tags" id="tags"></ul>
     <div class="ver" id="ver" hidden></div>
@@ -210,6 +212,7 @@ footer a{color:var(--mut)}
 /* ============ EDIT THIS PART ============ */
 var CONFIG = {
   name: "SeiTune",
+  author: "mrk",
   tagline: "Free, ad-free music and video player for Android. Search YouTube, stream, download and play offline.",
   owner: "glmrkk09",
   repo: "SeiTune",
@@ -262,6 +265,7 @@ var CONFIG = {
   document.title = CONFIG.name + " download";
   $("name").textContent = CONFIG.name;
   $("tagline").textContent = CONFIG.tagline;
+  $("by").textContent = "by: " + CONFIG.author;
   var icon = $("icon");
   icon.onerror = function(){ icon.onerror = null; icon.src = CONFIG.iconFallback; };
   icon.src = CONFIG.icon;
