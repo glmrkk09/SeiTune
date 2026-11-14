@@ -12,6 +12,7 @@ A free, ad-free music and video player for Android that searches YouTube, stream
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![Android 7.0+](https://img.shields.io/badge/Android-7.0%2B-3ddc84)
+[![Download](https://img.shields.io/github/v/release/glmrkk09/SeiTune?label=download)](https://github.com/glmrkk09/SeiTune/releases/latest)
 
 </div>
 
@@ -26,8 +27,13 @@ A free, ad-free music and video player for Android that searches YouTube, stream
 - Queue, shuffle, repeat (off / all / one), favourites and recently played.
 - Playlists: search YouTube playlists, open them, or paste a playlist link.
 
+### Lyrics
+- Synced lyrics that follow the song, found online and saved with the track.
+- When a song has no lyrics anywhere, the app can listen to it on the phone and write them down with timings (offline speech recognition, English only, best effort). It downloads a small model (about 40 MB) once, the first time it is needed.
+- Translate lyrics into another language, and nudge the timing earlier or later if a track is off.
+
 ### Download
-- Audio (M4A, no conversion) or video (MP4, 360p to 1080p).
+- Audio as M4A (no conversion, fastest) or MP3 (converted on the phone, slower), or video as MP4 (360p to 1080p).
 - Fast downloads: the stream link is fetched directly and downloaded in parallel pieces, with yt-dlp as the fallback.
 - Download everything from a search or a playlist in one tap. Items queue and run 1 to 6 at a time.
 - Saved to `/storage/emulated/0/Music/SeiTune/` by default, so songs show up in your music apps but not in Gallery. Change the folder in **Settings > Save folder**.
@@ -43,6 +49,7 @@ A free, ad-free music and video player for Android that searches YouTube, stream
 ### Interface
 - Dark and light themes.
 - Android Back button goes back one level: closes sheets, collapses the player, leaves a playlist, returns to Home, and only then sends the app to the background.
+- **Engine status** (tap the debug log in Settings): shows which stream sources are working, which are resting, and why. Copy the log from there when something fails.
 
 ## Performance
 
@@ -84,9 +91,20 @@ Note: Generated via Root (su) kernel profiling on Android.
 
 ## Install
 
-Download the latest APK from the [Releases](https://github.com/glmrkk09/SeiTune/releases) page, or build it yourself (below). Allow installs from unknown sources when Android asks.
+Get the latest APK from the [Releases](https://github.com/glmrkk09/SeiTune/releases/latest) page and allow installs from unknown sources when Android asks.
 
-Requirements: Android 7.0 (API 24) or newer, 64-bit ARM (arm64-v8a) phone.
+**Which file?** The right one depends on your phone's processor, not on your Android version.
+
+| File | Use it on |
+|---|---|
+| `SeiTune-arm64-v8a.apk` | Almost every phone and tablet from the last several years, including all phones on Android 11 or newer. **Pick this one if unsure.** |
+| `SeiTune-armeabi-v7a.apk` | Older or very low-end 32-bit phones. Use it only if the first one will not install. |
+
+The `.idsig` files next to the APKs are signing files. You do not need them.
+
+When updating, install the same type you had before.
+
+Requirements: Android 7.0 (API 24) or newer.
 
 ## Build
 
@@ -98,7 +116,7 @@ Requirements: Android 7.0 (API 24) or newer, 64-bit ARM (arm64-v8a) phone.
 gradle assembleRelease
 ```
 
-The APK is written to `app/build/outputs/apk/release/app-release.apk`. Use `assembleDebug` for a debug build.
+The APKs are written to `app/build/outputs/apk/release/`. Use `assembleDebug` for a debug build. The processor types that are built are set by `abiFilters` in `app/build.gradle.kts`.
 
 **GitHub Actions, no PC setup:** push the project to a repository, open the **Actions** tab, run **Build APK**, then download the `SEITUNE-apk` artifact.
 
@@ -108,19 +126,23 @@ The APK is written to `app/build/outputs/apk/release/app-release.apk`. Use `asse
 |---|---|
 | `MainActivity` | The app's own browser: a WebView showing `assets/index.html` |
 | `Api.kt` | Answers the UI's `/api/...` calls inside the app, with no network port |
+| `Sei.kt` | The stream engine's memory: scores each YouTube source, rests the ones that fail, and keeps that across restarts |
 | `PlaybackService` | Foreground service with a native audio player, notification and lock-screen controls |
 | `Offline.kt` | Downloads, cache, priorities, pinning and cleanup |
+| `Lyrics.kt`, `Transcribe.kt` | Finding synced lyrics, and writing them from the audio when none exist |
 | `MusicFolders.kt` | Imported music folders |
 | `SaveDir.kt` | Public save folder (MediaStore) |
-| [youtubedl-android](https://github.com/yausername/youtubedl-android) | Bundles Python and yt-dlp; yt-dlp updates itself in the background |
+| [youtubedl-android](https://github.com/yausername/youtubedl-android) | Bundles Python, yt-dlp and ffmpeg; yt-dlp updates itself in the background |
 
 The user interface is a single self-contained HTML file with no outside libraries, frameworks or CDNs. Thumbnails load from `i.ytimg.com`.
 
-ffmpeg is not bundled, to keep the APK small. As a result there is no MP3 conversion, and video is limited to single-file formats (usually 360p for streaming and downloads).
+SeiTune asks YouTube for the stream with its own code first, and falls back to yt-dlp when that fails. YouTube changes how it hands out streams often, so a source can stop working for a while. The app switches to another one on its own, and **Engine status** shows what happened.
+
+ffmpeg is bundled for MP3 conversion and for joining HD video with its sound.
 
 ## Privacy
 
-SeiTune has no account, analytics or tracking. Nothing is sent anywhere except the requests you trigger to the sites you search, stream and download from. Downloads and the cache are stored on your device. Imported folders are only read.
+SeiTune has no account, analytics or tracking. Nothing is sent anywhere except the requests you trigger to the sites you search, stream and download from, plus lyrics lookups (lrclib.net) and the one-time speech model download if you use it. Downloads and the cache are stored on your device. Imported folders are only read.
 
 ## Disclaimer
 
@@ -132,4 +154,4 @@ Copyright (C) 2026 Glmrk.
 
 SeiTune is free software under the **GNU General Public License v3**: you can use, study, change and share it, and any copy or changed version must stay free under the same license with the source code available. See [LICENSE](LICENSE) (and the [DISCLAIMER](DISCLAIMER.md)) or <https://www.gnu.org/licenses/gpl-3.0.html>.
 
-Third-party: [yt-dlp](https://github.com/yt-dlp/yt-dlp) (Unlicense), [youtubedl-android](https://github.com/yausername/youtubedl-android) (GPL v3).
+Third-party: [yt-dlp](https://github.com/yt-dlp/yt-dlp) (Unlicense), [youtubedl-android](https://github.com/yausername/youtubedl-android) (GPL v3), [Vosk](https://alphacephei.com/vosk/) (Apache 2.0), lyrics from [lrclib.net](https://lrclib.net).
