@@ -1,0 +1,54 @@
+<!doctype html><html><head><meta charset="utf-8"></head><body><script>
+(function () {
+  'use strict';
+  var fns = {}, out = [], minter = null;
+
+  function b64ToU8(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '=';
+    var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+  function u8ToB64(u) { var s = ''; for (var i = 0; i < u.length; i++) s += String.fromCharCode(u[i]);
+    return btoa(s).replace(/\+/g, '-').replace(/\//g, '_'); }
+  function descramble(s) { var u = b64ToU8(s); for (var i = 0; i < u.length; i++) u[i] = (u[i] + 97) & 255;
+    return new TextDecoder().decode(u); }
+  function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  function run(id, fn) {
+    var p; try { p = Promise.resolve(fn()); } catch (e) { p = Promise.reject(e); }
+    p.then(function (v) { Native.done(id, true, String(v)); },
+           function (e) { Native.done(id, false, (e && e.message) || String(e)); });
+  }
+
+  window.seitune = {
+    // raw = body of the Create answer. Gives back the botguardResponse string.
+    runBotguard: function (id, raw) { run(id, async function () {
+      var a = JSON.parse(raw);
+      var d = (a.length > 1 && typeof a[1] === 'string') ? JSON.parse(descramble(a[1])) : a[0];
+      var script = (d[1] || []).find(function (x) { return typeof x === 'string'; });
+      var program = d[4], globalName = d[5];
+      if (!script || !program || !globalName) throw new Error('challenge shape changed');
+      (0, eval)(script);
+      var vm = window[globalName];
+      if (!vm || !vm.a) throw new Error('vm missing');
+      vm.a(program, function (asyncSnapshot) { fns.snapshot = asyncSnapshot; }, true, undefined, function () {}, [[], []]);
+      for (var i = 0; i < 30 && !fns.snapshot; i++) await wait(100);
+      if (!fns.snapshot) throw new Error('no snapshot fn');
+      return await new Promise(function (res, rej) {
+        try { fns.snapshot(function (r) { res(r); }, [undefined, undefined, out, undefined]); } catch (e) { rej(e); }
+      });
+    }); },
+
+    setIntegrity: function (id, token) { run(id, async function () {
+      if (typeof out[0] !== 'function') throw new Error('no minter factory');
+      minter = await out[0](b64ToU8(token));
+      if (typeof minter !== 'function') throw new Error('minter invalid');
+      return 'ok';
+    }); },
+
+    mint: function (id, identifier) { run(id, async function () {
+      if (!minter) throw new Error('not ready');
+      var r = await minter(new TextEncoder().encode(identifier));
+      if (!(r instanceof Uint8Array)) throw new Error('bad mint result');
+      return u8ToB64(r);
+    }); }
+  };
+})();
+</script></body></html>
