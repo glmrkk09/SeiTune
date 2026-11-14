@@ -8,7 +8,7 @@
 
 **Music for your quiet world.**
 
-A free, ad-free music and video player for Android that searches YouTube, streams the media file itself, and downloads songs and videos to your device. Everything runs inside the app: no account and no API key.
+A free, ad-free player for Android: search, stream, download and listen offline, with no account.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![Android 7.0+](https://img.shields.io/badge/Android-7.0%2B-3ddc84)
@@ -146,12 +146,37 @@ SeiTune has no account, analytics or tracking. Nothing is sent anywhere except t
 
 ## Disclaimer
 
-SeiTune is a general-purpose player and download client. It hosts no content, and everything you search, play or download comes straight from third-party services to your device. You alone are responsible for your use of the app, for following the laws that apply to you, the rights of creators and the terms of the services you use. Only download content you have the right to download. The developer does not condone illegal use and is not liable for any use or misuse of the app. Read the full [DISCLAIMER](DISCLAIMER.md).
+> [!WARNING]
+> SeiTune is a general-purpose player and download client. It **hosts no content**. Everything you search, play or download comes straight from third-party services to your device.
+
+- **Your responsibility.** You alone are responsible for how you use the app: follow the laws that apply to you, respect the rights of creators and the terms of the services you use.
+- **Download only what you may.** Only download content you have the right to download.
+- **No liability.** The developer does not condone illegal use and is not liable for any use or misuse of the app.
+
+Read the full [DISCLAIMER](DISCLAIMER.md).
 
 ## License
 
-Copyright (C) 2026 Glmrk.
+<div align="center">
 
-SeiTune is free software under the **GNU General Public License v3**: you can use, study, change and share it, and any copy or changed version must stay free under the same license with the source code available. See [LICENSE](LICENSE) (and the [DISCLAIMER](DISCLAIMER.md)) or <https://www.gnu.org/licenses/gpl-3.0.html>.
+[![GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Third-party: [yt-dlp](https://github.com/yt-dlp/yt-dlp) (Unlicense), [youtubedl-android](https://github.com/yausername/youtubedl-android) (GPL v3), [Vosk](https://alphacephei.com/vosk/) (Apache 2.0), lyrics from [lrclib.net](https://lrclib.net).
+</div>
+
+| | |
+|---|---|
+| **Copyright** | © 2026 Glmrk |
+| **License** | GNU General Public License v3 |
+| **You can** | Use, study, change and share it |
+| **You must** | Keep every copy and changed version free under the same license, with the source code available |
+
+See [LICENSE](LICENSE) and the [DISCLAIMER](DISCLAIMER.md), or read the license at <https://www.gnu.org/licenses/gpl-3.0.html>.
+
+### Third-party
+
+| Project | License |
+|---|---|
+| [yt-dlp](https://github.com/yt-dlp/yt-dlp) | Unlicense |
+| [youtubedl-android](https://github.com/yausername/youtubedl-android) | GPL v3 |
+| [Vosk](https://alphacephei.com/vosk/) | Apache 2.0 |
+| [lrclib.net](https://lrclib.net) | Lyrics source |
